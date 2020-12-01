@@ -1,0 +1,48 @@
+{
+  "name": "grab-ip",
+  "version": "0.0.1",
+  "description": "A simple web app for capturing public IPs.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kennethallen/grab-ip.git"
+  },
+  "author": "Kenneth Allen",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/kennethallen/grab-ip/issues"
+  },
+  "homepage": "https://github.com/kennethallen/grab-ip#readme",
+  "devDependencies": {
+    "@tsconfig/node12": "^1.0.7",
+    "@types/koa": "^2.11.6",
+    "@types/koa-logger": "^3.1.1",
+    "@types/koa-router": "^7.4.1",
+    "@types/node": "^14.14.10",
+    "@types/pg": "^7.14.7",
+    "@types/randomstring": "^1.1.6",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "eslint": "^7.14.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "nodemon": "^2.0.6",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "koa": "^2.13.0",
+    "koa-logger": "^3.2.1",
+    "koa-pug": "^4.0.4",
+    "koa-router": "^10.0.0",
+    "pg": "^8.5.1",
+    "randomstring": "^1.1.5"
+  }
+}

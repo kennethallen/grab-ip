@@ -1,0 +1,11 @@
+doctype html
+html(lang='en')
+  head
+    title IP Grabber
+  body
+    h1 Your IP has been grabbed!
+    p This page was created at #{creationTime}
+    p Accesses to this link:
+    ol
+      each access in accesses
+        li #{access.ip} at #{access.time}
