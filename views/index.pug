@@ -1,12 +1,10 @@
-doctype html
-html(lang='en')
-  head
-    title IP Grabber
-  body
-    h1 IP Grabber
-    if generatedGrabPath
-      p Share this IP-grabbing link: 
-        a(href=`/${generatedGrabPath}`)= generatedGrabPath
-      p Then visit the link yourself to see accesses.
-    p
-      a(href='/?generate=true') Generate new IP-grabbing link
+extends layout
+
+block body
+  h1 IP Grabber
+  if generatedGrabPath
+    p Share this IP-grabbing link: 
+      a(href=`/${generatedGrabPath}`)= generatedGrabPath
+    p Then visit the link yourself to see accesses.
+  p
+    a(href='/?generate=true') Generate new IP-grabbing link
