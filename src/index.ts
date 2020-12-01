@@ -8,7 +8,7 @@ import randomstring from 'randomstring'
 const app = new Koa()
 const router = new Router()
 const pug = new Pug({
-  viewPath: 'src',
+  viewPath: 'views',
 })
 pug.use(app)
 
