@@ -8,10 +8,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      PGHOST: db
-      PGUSER: postgres
-      PGPASSWORD: JABc7jERGQKdvMSV
-      PGDATABASE: postgres
+      PGCONNECTION: postgres://postgres:JABc7jERGQKdvMSV@db/postgres
 
   db:
     build: db

@@ -2,8 +2,8 @@ import Koa from 'koa'
 import Router from 'koa-router'
 import Pug from 'koa-pug'
 import logger from 'koa-logger'
-import pg from 'pg'
 import randomstring from 'randomstring'
+import db from './db'
 
 const app = new Koa()
 const router = new Router()
@@ -11,8 +11,6 @@ const pug = new Pug({
   viewPath: 'views',
 })
 pug.use(app)
-
-const pool = new pg.Pool()
 
 router.get('/', async ctx => {
   let generatedGrabPath = null
@@ -23,7 +21,7 @@ router.get('/', async ctx => {
         readable: true,
       })
       try {
-        await pool.query(
+        await db.none(
           `INSERT INTO page (path, creation_time, creation_ip)
           VALUES ($1::text, NOW(), $2::inet)`,
           [generatedGrabPath, ctx.request.ip],
@@ -47,36 +45,38 @@ router.get('/:grabPath', async ctx => {
   const grabPath = ctx.params.grabPath
   let creationTime: Date | undefined
   let creationIp: string | undefined
-  let accesses: {time: string, ip: string}[] | undefined
+  let accesses: { time: string, ip: string }[] | undefined
 
-  await pool.query('BEGIN')
-  const pageRes = await pool.query(
-    `SELECT id, creation_time, creation_ip
-    FROM page
-    WHERE path = $1::text`,
-    [grabPath],
-  )
-  if (pageRes.rowCount) {
-    const pageId = pageRes.rows[0].id
-    creationTime = pageRes.rows[0].creation_time
-    creationIp = pageRes.rows[0].creation_ip
-    await pool.query(
-      `INSERT INTO access (page_id, time, ip)
-      VALUES ($1::integer, NOW(), $2::inet)`,
-      [pageId, ctx.request.ip],
+  // eslint-disable-next-line camelcase
+  let pageRes: { id: string, creation_time: Date, creation_ip: string } | null | undefined
+  await db.tx(async t => {
+    pageRes = await t.oneOrNone(
+      `SELECT id, creation_time, creation_ip
+      FROM page
+      WHERE path = $1::text`,
+      [grabPath],
     )
-    const accessesRes = await pool.query(
-      `SELECT time, ip
-      FROM access
-      WHERE page_id = $1::integer
-      ORDER BY time`,
-      [pageId],
-    )
-    accesses = accessesRes.rows
-  }
-  await pool.query('COMMIT')
+    console.log(JSON.stringify(pageRes))
+    if (pageRes) {
+      const pageId = pageRes.id
+      creationTime = pageRes.creation_time
+      creationIp = pageRes.creation_ip
+      await t.none(
+        `INSERT INTO access (page_id, time, ip)
+        VALUES ($1::integer, NOW(), $2::inet)`,
+        [pageId, ctx.request.ip],
+      )
+      accesses = await t.manyOrNone(
+        `SELECT time, ip
+        FROM access
+        WHERE page_id = $1::integer
+        ORDER BY time`,
+        [pageId],
+      )
+    }
+  })
 
-  if (pageRes.rowCount) {
+  if (pageRes) {
     await ctx.render('grab', {
       grabPath,
       creationTime,
